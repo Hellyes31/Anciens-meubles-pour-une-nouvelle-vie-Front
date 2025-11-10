@@ -18,8 +18,10 @@ export default function LoginPage(){
                 password: password,
             });
 
+
             const user = res.data;
             console.log("Utilisateur connecté : ", user);
+            // setMessage(`✅ Bienvenue ${res.data.firstname} !`);
         } catch (err:any){
             if (err.response && err.response.data) {
                 setError(err.response.data);
@@ -29,7 +31,7 @@ export default function LoginPage(){
         }
     };
 return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100  text-black">
       <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded shadow-md w-96"
