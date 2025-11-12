@@ -5,6 +5,7 @@ import axios from "axios";
 
 export default function LoginPage(){
     const [login, setLogin] = useState("");
+    // const [token, setToken] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
@@ -13,15 +14,19 @@ export default function LoginPage(){
         setError("");
 
         try {
-            const res = await axios.post("http://localhost:8080/api/login", {
+            const res = await axios.post("http://localhost:8080/auth/login", {
                 username: login,
                 password: password,
             });
 
 
-            const user = res.data;
+            const { token, user } = res.data;
+
             console.log("Utilisateur connecté : ", user);
-            // setMessage(`✅ Bienvenue ${res.data.firstname} !`);
+            console.log("Token: ", token);
+
+            localStorage.setItem("token", token);
+
         } catch (err:any){
             if (err.response && err.response.data) {
                 setError(err.response.data);
