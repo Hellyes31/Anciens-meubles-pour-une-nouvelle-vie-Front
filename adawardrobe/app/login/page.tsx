@@ -1,79 +1,88 @@
 "use client";
 
-import {useState} from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 
-export default function LoginPage(){
-    const [login, setLogin] = useState("");
-    // const [token, setToken] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+export default function LoginPage() {
+  const [login, setLogin] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent) =>{
-        e.preventDefault();
-        setError("");
+  const router = useRouter();
 
-        try {
-            const res = await axios.post("http://localhost:8080/auth/login", {
-                username: login,
-                password: password,
-            });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
 
+    try {
+      const res = await axios.post("http://localhost:8080/auth/login", {
+        username: login,
+        password: password,
+      });
+      const { token, user } = res.data;
+      const data = res.data;
+      const role = data.user.role.role;
 
-            const { token, user } = res.data;
+      console.log("Utilisateur connecté : ", user);
+      console.log("Token: ", token);
+      console.log(role);
 
-            console.log("Utilisateur connecté : ", user);
-            console.log("Token: ", token);
+      if (role === "ROLE_ADMIN") {
+        router.push("/admin");
+      } else {
+        router.push("/dashboard");
+      }
 
-            localStorage.setItem("token", token);
-
-        } catch (err:any){
-            if (err.response && err.response.data) {
-                setError(err.response.data);
-            } else {
-                setError("Une erreur est survenue");
-            }
-        }
-    };
-return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 text-black">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded shadow-md w-96"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Connexion</h2>
-
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-
-        <div className="mb-4">
-          <label className="block mb-1">Nom Utilisateur ou Email</label>
-          <input
-            type="text"
-            value={login}
-            onChange={(e) => setLogin(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-            required
-          />
+      localStorage.setItem("token", token);
+    } catch (err: any) {
+      if (err.response && err.response.data) {
+        setError(err.response.data);
+      } else {
+        setError("Une erreur est survenue");
+      }
+    }
+  };
+  return (
+    <div className="app-container">
+      <header className="header">
+        <div className="header-content">
+          <h1>Adaaaaaaaaaaaa</h1>
         </div>
-
-        <div className="mb-6">
-          <label className="block mb-1">Mot de passe</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-            required
-          />
+        <p className="header-subtitle">Donnez une seconde vie à vos meubles </p>
+      </header>
+      <div className="main-content">
+        <div className="card">
+          <h2 className="card-header">Connexion</h2>
+          <form onSubmit={handleSubmit} className="form-container">
+            <div>
+              <label htmlFor="">Nom Utilisateur ou Email</label>
+              <input
+                type="text"
+                value={login}
+                onChange={(e) => setLogin(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="">Mot de passe</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            </div>
+            <button
+              type="submit"
+              className="submit-btn"
+            >
+              <span>Se connecter</span>
+            </button>
+            <button className="submit-btn manage-btn" onClick={() => router.push("/register")}>Créer un compte</button>
+          </form>
         </div>
-
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-        >
-          Se connecter
-        </button>
-      </form>
+      </div>
     </div>
   );
 }
