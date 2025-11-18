@@ -35,6 +35,7 @@ export default function LoginPage() {
       }
 
       localStorage.setItem("token", token);
+      
     } catch (err: any) {
       if (err.response && err.response.data) {
         setError(err.response.data);
@@ -47,16 +48,17 @@ export default function LoginPage() {
     <div className="app-container">
       <header className="header">
         <div className="header-content">
-          <h1>Adaaaaaaaaaaaa</h1>
+          <h1>Anciens meubles, nouvelle vie</h1>
         </div>
-        <p className="header-subtitle">Donnez une seconde vie à vos meubles </p>
+        <p className="header-subtitle">Donnez une seconde chance à vos meubles ♻️</p>
       </header>
       <div className="main-content">
         <div className="card">
           <h2 className="card-header">Connexion</h2>
           <form onSubmit={handleSubmit} className="form-container">
+            {error && <p style={{ color: "red" }}>{error}</p>}
             <div>
-              <label htmlFor="">Nom Utilisateur ou Email</label>
+              <label htmlFor="">Nom utilisateur ou email</label>
               <input
                 type="text"
                 value={login}
