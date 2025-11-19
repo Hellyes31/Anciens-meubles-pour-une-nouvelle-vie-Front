@@ -1,41 +1,40 @@
-"use client";
-
+'use client';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 
+interface TokenPayload {
+  role?: string;
+  exp?: number;
+}
+
 export default function AdminPage() {
   const router = useRouter();
-  const [allowed, setAllowed] = useState(false);
+  const [loading, setLoading] = useState(true); // On bloque le rendu tant que la vérification n’est pas faite
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
+    console.log(token)
     if (!token) {
-      router.push("/login");
+      router.push("/unauthorized");
       return;
     }
 
     try {
-      const decoded: any = jwtDecode(token);
-
+      const decoded: TokenPayload = jwtDecode(token);
       if (decoded.role !== "ROLE_ADMIN") {
         router.push("/unauthorized");
-        return;
+      } else {
+        setLoading(false); // Token ok, on peut afficher la page
       }
-
-      setAllowed(true);
-    } catch (err) {
-      router.push("/login");
+    } catch (error) {
+      router.push("/unauthorized");
     }
-  }, []);
+  }, [router]);
 
-  if (!allowed) return <p>Chargement...</p>;
+  if (loading) {
+    return <div className="app-container flex items-center justify-center min-h-screen">Chargement...</div>;
+  }
 
-  return (
-    <div>
-      <h1>Bienvenue sur la page admin, {}</h1>
-    </div>
-  );
+  return <div>Page Admin sécurisée</div>;
 }
-

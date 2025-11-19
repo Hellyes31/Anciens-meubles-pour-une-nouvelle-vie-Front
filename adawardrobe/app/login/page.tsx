@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
@@ -10,6 +11,10 @@ export default function LoginPage() {
   const [error, setError] = useState("");
 
   const router = useRouter();
+
+  useEffect(() => {
+    localStorage.removeItem("token");
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +40,6 @@ export default function LoginPage() {
       }
 
       localStorage.setItem("token", token);
-      
     } catch (err: any) {
       if (err.response && err.response.data) {
         setError(err.response.data);
@@ -50,7 +54,9 @@ export default function LoginPage() {
         <div className="header-content">
           <h1>Anciens meubles, nouvelle vie</h1>
         </div>
-        <p className="header-subtitle">Donnez une seconde chance à vos meubles ♻️</p>
+        <p className="header-subtitle">
+          Donnez une seconde chance à vos meubles ♻️
+        </p>
       </header>
       <div className="main-content">
         <div className="card">
@@ -68,20 +74,22 @@ export default function LoginPage() {
             </div>
             <div>
               <label htmlFor="">Mot de passe</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </div>
-            <button
-              type="submit"
-              className="submit-btn"
-            >
+            <button type="submit" className="submit-btn">
               <span>Se connecter</span>
             </button>
-            <button className="submit-btn manage-btn" onClick={() => router.push("/register")}>Créer un compte</button>
+            <button
+              className="submit-btn manage-btn"
+              onClick={() => router.push("/register")}
+            >
+              Créer un compte
+            </button>
           </form>
         </div>
       </div>
