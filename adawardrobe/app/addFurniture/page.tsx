@@ -17,7 +17,7 @@ export default function PostFurniture() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  
+
   const [photo, setPhoto] = useState<File | null>(null);
 
   const [colorList, setColorList] = useState<Color[]>([]);
@@ -36,8 +36,16 @@ export default function PostFurniture() {
     const loadOptions = async () => {
       try {
         const [colors, types] = await Promise.all([
-          axios.get("http://localhost:8080/api/color"),
-          axios.get("http://localhost:8080/api/type"),
+          axios.get("http://localhost:8080/api/color", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }),
+          axios.get("http://localhost:8080/api/type", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }),
         ]);
 
         setColorList(colors.data);
@@ -50,7 +58,7 @@ export default function PostFurniture() {
     loadOptions();
   }, []);
 
-    const uploadToImageKit = async (file: File): Promise<string> => {
+  const uploadToImageKit = async (file: File): Promise<string> => {
     // Étape 1: récupérer token/signature/expire
     const auth = await axios.get(
       "http://localhost:8080/api/imagekit/generate-auth-params"
@@ -102,7 +110,7 @@ export default function PostFurniture() {
           colorId = res.data.id;
           setColorList((prev) => [...prev, res.data]);
         }
-      }  else {
+      } else {
         colorId = parseInt(selectedColor);
       }
 
@@ -129,7 +137,6 @@ export default function PostFurniture() {
           "Erreur lors de la création de la couleur ou du type"
       );
     }
-
 
     let photoUrl = "";
     if (photo) {
@@ -198,7 +205,8 @@ export default function PostFurniture() {
             </div>
             <div>
               <label htmlFor="">Description</label>
-              <textarea
+              <input
+              type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
@@ -269,7 +277,7 @@ export default function PostFurniture() {
               />
             </div>
             <div>
-              <p>Status : En atttente</p>
+              <p>Votre meuble sera mis en ligne une fois qu'un admin l'aura accepté, cela prendra 24h maximum. Merci.</p>
             </div>
             <button type="submit" className="submit-btn">
               <span>Ajouter le meuble</span>

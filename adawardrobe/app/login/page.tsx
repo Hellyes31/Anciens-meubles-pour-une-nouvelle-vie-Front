@@ -11,7 +11,6 @@ export default function LoginPage() {
   const [error, setError] = useState("");
 
   const router = useRouter();
-  console.log("PUBLIC KEY =", process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY);
   useEffect(() => {
     localStorage.removeItem("token");
   }, []);
