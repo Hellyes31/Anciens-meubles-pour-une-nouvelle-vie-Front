@@ -10,7 +10,7 @@ interface TokenPayload {
 
 export default function AdminPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true); // On bloque le rendu tant que la vérification n’est pas faite
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -25,7 +25,7 @@ export default function AdminPage() {
       if (decoded.role !== "ROLE_ADMIN") {
         router.push("/unauthorized");
       } else {
-        setLoading(false); // Token ok, on peut afficher la page
+        setLoading(false);
       }
     } catch (error) {
       router.push("/unauthorized");
