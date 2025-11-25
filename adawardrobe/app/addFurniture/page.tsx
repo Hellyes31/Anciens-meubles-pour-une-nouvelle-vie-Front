@@ -91,9 +91,16 @@ export default function PostFurniture() {
         );
         if (existingColor) colorId = existingColor.id;
         else {
-          const res = await axios.post("http://localhost:8080/api/color", {
-            name: newColor,
-          });
+          const res = await axios.post(
+            "http://localhost:8080/api/color",
+            { color: newColor },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
           colorId = res.data.id;
           setColorList((prev) => [...prev, res.data]);
         }
@@ -108,9 +115,16 @@ export default function PostFurniture() {
         if (existingType) {
           typeId = existingType.id;
         } else {
-          const res = await axios.post("http://localhost:8080/api/type", {
-            name: newType,
-          });
+          const res = await axios.post(
+            "http://localhost:8080/api/type",
+            { type: newType },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
           typeId = res.data.id;
           setTypeList((prev) => [...prev, res.data]);
         }
@@ -155,6 +169,7 @@ export default function PostFurniture() {
           },
         }
       );
+
       setTitle("");
       setDescription("");
       setPrice("");
@@ -167,6 +182,9 @@ export default function PostFurniture() {
       alert("Meuble ajouté avec succès !");
     } catch (err: any) {
       console.error(err);
+      console.log("TYPE ID =", typeId);
+      console.log("COLOR ID =", colorId);
+      console.log("FURNITURE DATA =", furnitureData);
       setError("Erreur lors de l’envoi du meuble.");
     }
   };

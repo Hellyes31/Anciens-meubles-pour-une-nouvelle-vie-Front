@@ -1,4 +1,4 @@
-"use client"; // obligatoire pour un composant client avec useState
+"use client";
 
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -12,7 +12,14 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchFurnitures = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/furnitures");
+        const response = await axios.get(
+          "http://localhost:8080/api/furniture",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
         setFurnitures(response.data);
       } catch (error) {
         console.error("Erreur lors de la récupération des meubles", error);
@@ -35,25 +42,31 @@ export default function Dashboard() {
             key={index}
             className="border rounded-lg shadow-lg p-4 flex flex-col"
           >
-            {furniture.photo?.url && (
-              <Image
-                src={furniture.photo.url}
+            {furniture.photos?.[0]?.photo && (
+              <img
+                src={furniture.photos[0].photo}
                 alt={furniture.title ?? "Meuble"}
-                width={300}
-                height={200}
-                className="object-cover rounded-md mb-4"
+                style={{
+                  width: "300px",
+                  height: "200px",
+                  objectFit: "cover",
+                  borderRadius: "0.5rem",
+                  marginBottom: "1rem",
+                }}
               />
             )}
-            <h2 className="text-xl font-semibold mb-2">{furniture.title ?? ""}</h2>
+            <h2 className="text-xl font-semibold mb-2">
+              {furniture.title ?? ""}
+            </h2>
             <p className="text-gray-600 mb-2">{furniture.description ?? ""}</p>
             <p className="text-green-600 font-bold mb-2">
               {furniture.price ?? ""} €
             </p>
             <p className="text-sm text-gray-400">
-              {furniture.type?.name ?? ""} | {furniture.color?.name ?? ""}
+              {furniture.type?.type ?? ""} | {furniture.color?.color ?? ""}
             </p>
             <p className="text-sm text-gray-400">
-              Status: {furniture.status?.name ?? ""}
+              Status: {furniture.status?.status ?? ""}
             </p>
             <p className="text-sm text-gray-400">
               Créé le: {furniture.created_at ?? ""}
@@ -67,4 +80,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
