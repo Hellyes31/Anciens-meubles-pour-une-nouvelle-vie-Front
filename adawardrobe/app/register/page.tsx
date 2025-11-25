@@ -31,12 +31,19 @@ export default function Register() {
       city,
       password,
     };
+
+  
     setError("");
 
     try {
       const res = await axios.post(
         "http://localhost:8080/auth/register",
-        userForm
+        userForm,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
       setFirstname("");
       setLastname("");
@@ -46,10 +53,13 @@ export default function Register() {
       setPassword("");
       setConfirmPassword("");
 
-    if (window.confirm("Votre compte a été créé avec succès ! Cliquez sur OK pour vous connecter.")) {
-      router.push("/login");
-    }
-
+      if (
+        window.confirm(
+          "Votre compte a été créé avec succès ! Cliquez sur OK pour vous connecter."
+        )
+      ) {
+        router.push("/login");
+      }
     } catch (err: any) {
       if (err.response && err.response.data) {
         setError(err.response.data);
