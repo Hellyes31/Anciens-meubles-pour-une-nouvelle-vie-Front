@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
 import axios from "axios";
 
 interface Color {
@@ -22,6 +23,7 @@ export default function PostFurniture() {
 
   const [colorList, setColorList] = useState<Color[]>([]);
   const [selectedColor, setSelectedColor] = useState<string | "new">("");
+
   const [newColor, setNewColor] = useState("");
 
   const [typeList, setTypeList] = useState<Type[]>([]);
@@ -59,58 +61,43 @@ export default function PostFurniture() {
   }, []);
 
   const uploadToImageKit = async (file: File): Promise<string> => {
-    // Étape 1: récupérer token/signature/expire
-    const auth = await axios.get(
-      "http://localhost:8080/api/imagekit/generate-auth-params"
-    );
-
     const form = new FormData();
     form.append("file", file);
-    form.append("fileName", file.name);
-    form.append("publicKey", process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY!);
-    form.append("signature", auth.data.signature);
-    form.append("expire", auth.data.expire);
-    form.append("token", auth.data.token);
 
-    // Étape 2: upload direct ImageKit
-    const uploadRes = await fetch(
-      `${process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT}/files/upload`,
+    const res = await axios.post(
+      "http://localhost:8080/api/imagekit/upload",
+      form,
       {
-        method: "POST",
-        body: form,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       }
     );
 
-    if (!uploadRes.ok) {
-      throw new Error("Upload ImageKit échoué");
-    }
-
-    const result = await uploadRes.json();
-    return result.url;
+    return res.data.url;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    let colorId: number | null = null;
     let typeId: number | null = null;
-
+    let colorId: number | null = null;
     try {
       if (selectedColor === "new") {
         const existingColor = colorList.find(
           (c) => c.color.toLowerCase() === newColor.toLowerCase()
         );
-        if (existingColor) {
-          colorId = existingColor.id;
-        } else {
+        if (existingColor) colorId = existingColor.id;
+        else {
           const res = await axios.post("http://localhost:8080/api/color", {
             name: newColor,
           });
           colorId = res.data.id;
           setColorList((prev) => [...prev, res.data]);
         }
-      } else {
+      } else if (selectedColor !== "") {
         colorId = parseInt(selectedColor);
       }
 
@@ -152,8 +139,8 @@ export default function PostFurniture() {
       title,
       description,
       price: parseFloat(price),
-      color: { id: colorId },
-      photo: { photo: photoUrl },
+      color: colorId ? { id: colorId } : null,
+      photos: photoUrl ? [{ photo: photoUrl }] : [],
       status: { id: statusId },
       type: { id: typeId },
     };
@@ -161,7 +148,12 @@ export default function PostFurniture() {
     try {
       const res = await axios.post(
         "http://localhost:8080/api/furniture",
-        furnitureData
+        furnitureData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
       setTitle("");
       setDescription("");
@@ -177,6 +169,40 @@ export default function PostFurniture() {
       console.error(err);
       setError("Erreur lors de l’envoi du meuble.");
     }
+  };
+  const Dropzone = () => {
+    const { getRootProps, getInputProps } = useDropzone({
+      accept: { "image/*": [] },
+      multiple: false,
+      onDrop: (files) => setPhoto(files[0]),
+    });
+
+    return (
+      <div
+        {...getRootProps()}
+        className="drop-zone"
+        style={{
+          border: "2px dashed #ccc",
+          padding: "20px",
+          textAlign: "center",
+          cursor: "pointer",
+        }}
+      >
+        <input {...getInputProps()} />
+        {photo ? (
+          <div>
+            <p>{photo.name}</p>
+            <img
+              src={URL.createObjectURL(photo)}
+              alt="Prévisualisation"
+              style={{ maxWidth: "100px", marginTop: "10px" }}
+            />
+          </div>
+        ) : (
+          <p>Glissez-déposez votre image ici, ou cliquez pour sélectionner</p>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -206,7 +232,7 @@ export default function PostFurniture() {
             <div>
               <label htmlFor="">Description</label>
               <input
-              type="text"
+                type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
@@ -269,15 +295,13 @@ export default function PostFurniture() {
             </div>
             <div>
               <label htmlFor="">Photo</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setPhoto(e.target.files?.[0] ?? null)}
-                required
-              />
+              <Dropzone />
             </div>
             <div>
-              <p>Votre meuble sera mis en ligne une fois qu'un admin l'aura accepté, cela prendra 24h maximum. Merci.</p>
+              <p>
+                Votre meuble sera mis en ligne une fois qu'un admin l'aura
+                accepté, cela prendra 24h maximum. Merci.
+              </p>
             </div>
             <button type="submit" className="submit-btn">
               <span>Ajouter le meuble</span>
