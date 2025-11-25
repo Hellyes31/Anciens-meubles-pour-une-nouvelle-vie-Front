@@ -11,7 +11,6 @@ export default function LoginPage() {
   const [error, setError] = useState("");
 
   const router = useRouter();
-
   useEffect(() => {
     localStorage.removeItem("token");
   }, []);
