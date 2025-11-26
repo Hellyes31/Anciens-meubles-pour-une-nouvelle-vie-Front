@@ -31,11 +31,6 @@ export default function LoginPage() {
       const data = res.data;
       const role = data.user.role.role;
 
-      console.log("Utilisateur connecté : ", user);
-      console.log("Token: ", token);
-      console.log("IdUser: ", id_user);
-      console.log(role);
-
       if (role === "ROLE_ADMIN") {
         router.push("/admin");
       } else {
