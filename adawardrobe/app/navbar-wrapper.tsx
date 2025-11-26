@@ -21,6 +21,9 @@ export default function NavbarWrapper() {
         <a href="/profil" className="navbar-link">
           <span>Profil</span>
         </a>
+        <a href="/logout" className="navbar-link">
+          <span>Déconnexion</span>
+        </a>
       </div>
     </nav>
   );
