@@ -20,19 +20,19 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:8080/auth/login", {
-        headers :{
-          "Content-Type": "application/json"
-        },
-        username: login,
-        password: password,
-      });
+      const res = await axios.post(
+        "http://localhost:8080/auth/login",
+        { username: login, password: password },
+        { headers: { "Content-Type": "application/json" } }
+      );
       const { token, user } = res.data;
+      const id_user = user.id;
       const data = res.data;
       const role = data.user.role.role;
 
       console.log("Utilisateur connecté : ", user);
       console.log("Token: ", token);
+      console.log("IdUser: ", id_user);
       console.log(role);
 
       if (role === "ROLE_ADMIN") {
@@ -42,6 +42,7 @@ export default function LoginPage() {
       }
 
       localStorage.setItem("token", token);
+      localStorage.setItem("id_user", id_user.toString());
     } catch (err: any) {
       if (err.response && err.response.data) {
         setError(err.response.data);
