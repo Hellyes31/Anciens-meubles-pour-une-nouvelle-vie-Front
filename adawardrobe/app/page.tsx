@@ -5,14 +5,7 @@ export default function Home() {
   const router = useRouter();
   return (
       <div className="app-container flex flex-col">
-        <header className="header">
-          <div className="header-content">
-            <h1 className="header-title">Anciens meubles, nouvelle vie</h1>
-          </div>
-          <p className="header-subtitle">
-            Donnez une seconde chance à vos meubles ♻️
-          </p>
-        </header>
+
 
         <main className="main-content">
           <div className="card">
@@ -33,7 +26,7 @@ export default function Home() {
           </div>
         </main>
 
-        <footer>© {new Date().getFullYear()} - Meubles Recyclés</footer>
+        
       </div>
   );
 }

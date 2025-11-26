@@ -52,14 +52,6 @@ export default function LoginPage() {
   };
   return (
     <div className="app-container">
-      <header className="header">
-        <div className="header-content">
-          <h1>Anciens meubles, nouvelle vie</h1>
-        </div>
-        <p className="header-subtitle">
-          Donnez une seconde chance à vos meubles ♻️
-        </p>
-      </header>
       <div className="main-content">
         <div className="card">
           <h2 className="card-header">Connexion</h2>

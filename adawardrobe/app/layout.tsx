@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import NavbarWrapper from "./navbar-wrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +28,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <header className="header">
+          <div className="header-content">
+            <h1 className="header-title">Anciens meubles, nouvelle vie</h1>
+          </div>
+          <p className="header-subtitle">
+            Donnez une seconde chance à vos meubles ♻️
+          </p>
+        </header>
+        <NavbarWrapper />
+        <main>{children}</main>
+        <footer>© {new Date().getFullYear()} - Meubles Recyclés</footer>
       </body>
     </html>
   );
