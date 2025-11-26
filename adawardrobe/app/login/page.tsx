@@ -13,6 +13,7 @@ export default function LoginPage() {
   const router = useRouter();
   useEffect(() => {
     localStorage.removeItem("token");
+    localStorage.removeItem("id_user");
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
