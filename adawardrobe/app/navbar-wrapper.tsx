@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 export default function NavbarWrapper() {
   const pathname = usePathname();
 
-  const hideNavbar = pathname === "/login" || pathname === "/register";
+  const hideNavbar = pathname === "/login" || pathname === "/register" || pathname === "/";
 
   if (hideNavbar) return null;
 
